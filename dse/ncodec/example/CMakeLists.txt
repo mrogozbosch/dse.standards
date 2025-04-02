@@ -24,37 +24,50 @@ add_compile_options(${C_CXX_WARNING_FLAGS})
 
 # Targets
 # =======
+
+if(UNIX)
+    add_executable(example_dynamic
+        dynamic.c
+        example.c
+        stream.c
+        ../../../dse/ncodec/codec.c
+    )
+    target_include_directories(example_dynamic
+        PRIVATE
+            ../../..
+    )
+    target_link_libraries(example_dynamic
+        PRIVATE
+            dl
+    )
+endif()
+
 add_library(codec
     SHARED
         codec.c
+        ../../../dse/ncodec/codec.c
+        static.c
 )
+
 target_include_directories(codec
     PRIVATE
         ../../..
 )
 
-add_executable(example_dynamic
-    dynamic.c
-    example.c
-    stream.c
-    ../../../dse/ncodec/codec.c
-)
-target_include_directories(example_dynamic
-    PRIVATE
-        ../../..
-)
-target_link_libraries(example_dynamic
-    PRIVATE
-        dl
+target_compile_definitions(codec PRIVATE
+    $<$<PLATFORM_ID:Windows>:DLL_BUILD>
 )
 
 add_executable(example_static
-    codec.c
     example.c
-    static.c
     stream.c
-    ../../../dse/ncodec/codec.c
 )
+
+target_link_libraries(example_static
+    PRIVATE
+        codec
+)
+
 target_include_directories(example_static
     PRIVATE
         ../../..
