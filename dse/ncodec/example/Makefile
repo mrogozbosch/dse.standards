@@ -20,6 +20,8 @@ build_docker:
 	@docker run -it --rm \
 		--volume $$(pwd)/../../..:/tmp/repo \
 		--workdir /tmp/repo/dse/ncodec/example \
+		--env PACKAGE_ARCH=$(PACKAGE_ARCH) \
+		--env CMAKE_TOOLCHAIN_FILE=/tmp/repo/dse/ncodec/example/$(PACKAGE_ARCH).cmake \
 		$(GCC_BUILDER_IMAGE) \
 		/bin/bash -c "make all"
 
